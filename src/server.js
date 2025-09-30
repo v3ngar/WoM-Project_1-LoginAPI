@@ -10,14 +10,14 @@ app.use(cors())
 app.use(express.json())
 app.use(morgan('dev'))
 
-// Endast inloggning/användare
+//Endast inloggning/användare
 const usersRouter = require('./routes/users')
 app.use('/users', usersRouter)
 
-// Hälsa
+//Hälsa
 app.get('/healthz', (req, res) => res.json({ ok: true, service: 'login-api' }))
 
-// 404-fallback
+//404-fallback
 app.use((req, res) => res.status(404).json({ error: 'Not found' }))
 
 app.listen(PORT, () => {
