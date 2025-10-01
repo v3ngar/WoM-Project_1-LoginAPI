@@ -1,5 +1,5 @@
 const express = require('express')
-//const cors = require('cors')
+const cors = require('cors')
 const morgan = require('morgan')
 require('dotenv').config()
 
@@ -7,24 +7,22 @@ const app = express()
 const PORT = process.env.PORT || 3001
 
 
-app.use((req, res, next) => {
-  const allowed = new Set([
-    'https://people.arcada.fi',
-    'http://127.0.0.1:5501',
-    'http://localhost:5501',
-    'http://localhost:8080'
-  ])
-  const origin = req.headers.origin
-  if (!origin || allowed.has(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin || '*')
-    res.setHeader('Vary', 'Origin') // korrekt caching
-    res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS')
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-    // res.setHeader('Access-Control-Allow-Credentials', 'true') // bara om du använder cookies
-  }
-  if (req.method === 'OPTIONS') return res.sendStatus(204) // preflight-svar
-  next()
-})
+const ALLOW = new Set([
+  'https://people.arcada.fi',
+  'http://127.0.0.1:5501',
+  'http://localhost:5501',
+  'http://localhost:8080'
+])
+
+const corsOptions = {
+  origin: (origin, cb) => cb(null, !origin || ALLOW.has(origin)),
+  methods: ['GET','HEAD','PUT','PATCH','POST','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type','Authorization'],
+  optionsSuccessStatus: 204
+}
+
+app.use(cors(corsOptions))
+app.options('*', cors(corsOptions))
 
 app.use(express.json())
 app.use(morgan('dev'))
