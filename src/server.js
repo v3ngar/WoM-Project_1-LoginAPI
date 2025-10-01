@@ -7,22 +7,31 @@ const app = express()
 const PORT = process.env.PORT || 3001
 
 
+
 const ALLOW = new Set([
   'https://people.arcada.fi',
   'http://127.0.0.1:5501',
   'http://localhost:5501',
-  'http://localhost:8080'
-])
+  'http://localhost:8080',
+]);
 
 const corsOptions = {
-  origin: (origin, cb) => cb(null, !origin || ALLOW.has(origin)),
+  origin: (origin, cb) => {
+    if (!origin) return cb(null, true); // curl/server-to-server
+    // tillåt exakt listade origins OCH alla subdomäner under arcada.fi vid behov:
+    let ok = ALLOW.has(origin);
+    if (!ok) {
+      try { ok = new URL(origin).hostname.endsWith('.arcada.fi'); } catch {}
+    }
+    return cb(null, ok);
+  },
   methods: ['GET','HEAD','PUT','PATCH','POST','DELETE','OPTIONS'],
   allowedHeaders: ['Content-Type','Authorization'],
-  optionsSuccessStatus: 204
-}
+  optionsSuccessStatus: 204,
+};
 
-app.use(cors(corsOptions))
-app.options('*', cors(corsOptions))
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // preflight
 
 app.use(express.json())
 app.use(morgan('dev'))
