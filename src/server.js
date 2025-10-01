@@ -7,33 +7,12 @@ const app = express()
 
 app.use((req,res,next)=>{ if(req.headers.origin) console.log('Origin:', 
   req.headers.origin); next(); }); //debug
-  
+
 const PORT = process.env.PORT || 3001
 
 
-const ALLOW = new Set([
-  'https://people.arcada.fi',
-  'http://127.0.0.1:5501',
-  'http://localhost:5501',
-  'http://localhost:8080',
-])
-
-const corsOptions = {
-  origin: (origin, cb) => {
-    if (!origin) return cb(null, true) // curl/server-to-server
-    let ok = ALLOW.has(origin)
-    if (!ok) {
-      try { ok = new URL(origin).hostname.endsWith('.arcada.fi') } catch {}
-    }
-    return cb(null, ok) // kasta aldrig Error här
-  },
-  methods: ['GET','HEAD','PUT','PATCH','POST','DELETE','OPTIONS'],
-  // allowedHeaders: ['Content-Type','Authorization'],  // ← TA BORT: låt cors spegla automatiskt
-  optionsSuccessStatus: 204,
-}
-
-app.use(cors(corsOptions))
-app.options('*', cors(corsOptions)) // preflight
+app.use(cors())
+app.options('*', cors()) // preflight
 
 app.use(express.json())
 app.use(morgan('dev'))
