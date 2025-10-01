@@ -7,7 +7,7 @@ const app = express()
 const PORT = process.env.PORT || 3001
 
 
-app.use(cors({origin: '*'})) //tillåter alla origins
+app.use(cors()) //tillåter alla origins
 
 app.use(express.json())
 app.use(morgan('dev'))
