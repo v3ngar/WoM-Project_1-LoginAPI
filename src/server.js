@@ -1,38 +1,17 @@
 const express = require('express')
-//const cors = require('cors')
+const cors = require('cors')
 const morgan = require('morgan')
 require('dotenv').config()
 
 const app = express()
 
+const PORT = process.env.PORT || 3001
+
 app.use((req,res,next)=>{ if(req.headers.origin) console.log('Origin:', 
   req.headers.origin); next(); }); //debug
 
-const PORT = process.env.PORT || 3001
-
-
-// ---- CORS: tillåt allt (temporärt för att bevisa att det funkar) ----
-app.use((req, res, next) => {
-  const origin = req.headers.origin || '*';
-  res.setHeader('Access-Control-Allow-Origin', origin);
-  res.setHeader('Vary', 'Origin'); // korrekt caching per origin
-  res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
-  // spegla begärda headers om preflight, annars en vettig default
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    req.headers['access-control-request-headers'] || 'Content-Type, Authorization'
-  );
-  // Om du använder cookies: avkommentera raden nedan och se till att frontenden gör fetch(..., { credentials: 'include' })
-  // res.setHeader('Access-Control-Allow-Credentials', 'true');
-
-  if (req.method === 'OPTIONS') return res.sendStatus(204); // preflight
-  next();
-});
-// ---- /CORS ----
-
-
-//app.use(cors())
-//app.options('*', cors()) // preflight
+app.use(cors())
+app.options('*', cors()) // preflight
 
 app.use(express.json())
 app.use(morgan('dev'))
