@@ -100,14 +100,6 @@ router.post('/login', async (req, res) => {
         return res.status(401).send({ msg: "Refresh token required" });
     }
 
-    // Find user with this refresh token
-    /*
-    const user = await prisma.user.findFirst({
-        where: { 
-            token: refreshToken,
-            expires_at: { gt: new Date() } // Token not expired
-        }
-    });*/
 
     const tokenRecord = await prisma.refreshToken.findFirst({
     where: { 
@@ -119,15 +111,14 @@ router.post('/login', async (req, res) => {
     }
 });
 
-
-
+        // om ingen token, ge 401 unauthorized
     if (!tokenRecord) {
         return res.status(401).send({ msg: "Invalid or expired refresh token" });
     }
 
 
     const user = tokenRecord.user;
-    // Generate new access token
+    // Skapa access token
     const newAccessToken = await jwt.sign({
         sub: user.id,
         email: user.email,
