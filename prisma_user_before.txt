@@ -1,0 +1,14 @@
+model User {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  email     String   @unique
+  role      String   @default("user")
+  about     String?
+  password  String
+  token     String?  // The refresh token itself (optional, can be null)
+  issued_at DateTime? // When the token was issued
+  expires_at DateTime? // When the token expires
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Notes     Notes[]
+}

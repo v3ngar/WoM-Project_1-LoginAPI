@@ -1,5 +1,5 @@
 const express = require('express')
-//const cors = require('cors')
+const cors = require('cors')
 const morgan = require('morgan')
 require('dotenv').config()
 
@@ -10,8 +10,8 @@ const PORT = process.env.PORT || 3001 //test comment
 //app.use((req,res,next)=>{ if(req.headers.origin) console.log('Origin:', 
 //  req.headers.origin); next(); }); //debug
 
-//app.use(cors())
-//app.options('*', cors()) // preflight
+app.use(cors())
+app.options('*', cors()) // preflight
 
 app.use(express.json())
 app.use(morgan('dev'))

@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
@@ -11,20 +11,31 @@ datasource db {
 model Notes {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   author    User     @relation(fields: [authorId], references: [id])
-  authorId  String   
+  authorId  String
   note      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model User {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  email     String   @unique
-  role      String   @default("user")
-  about     String?
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  Notes     Notes[]
+  id           String         @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  email        String         @unique
+  role         String         @default("user")
+  about        String?
+  password     String
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  Notes        Notes[]
+  RefreshToken RefreshToken[]
+}
+
+model RefreshToken {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  user_id    String    @db.ObjectId // 1. This stores the actual ID value
+  token      String? // The refresh token itself (optional, can be null)
+  issued_at  DateTime? // When the token was issued
+  expires_at DateTime? // When the token expires
+  user       User      @relation(fields: [user_id], references: [id])
+  createdAt  DateTime  @default(now())
 }
