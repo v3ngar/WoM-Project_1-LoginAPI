@@ -59,21 +59,12 @@ router.post('/login', async (req, res) => {
     email: user.email,
     user: user.name, 
     role: user.role
-    }, process.env.JWT_SECRET, {expiresIn: '40s'})
+    }, process.env.JWT_SECRET, {expiresIn: '15m'})
 
     const refreshToken = crypto.randomBytes(64).toString('hex');
     const expires_at = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
     
-   /* await prisma.user.update({ //här breaker det sannolikt
-        where: { id: user.id },
-        data: {
-            token: refreshToken,
-            issued_at: new Date(),
-            expires_at: expires_at
-        }
-    });// 30 dagar*/
-    
-    //-----vvvv good code
+
     await prisma.refreshToken.create({
         data: {
             user_id: user.id,  // Link to the user
@@ -86,64 +77,10 @@ router.post('/login', async (req, res) => {
     res.send({
         msg: "Login OK",
         jwt: accessToken,
-        refreshToken: refreshToken // detta var tidigare utkommenterat
+        refreshToken: refreshToken 
     })
     //-------------^¨¨^^^
     
-
-
-    /*
-    //token exists start
-    const existingToken = await prisma.refreshToken.findFirst({
-    where: {
-        user_id: user.id,
-        expires_at: { gt: new Date() } // Still valid
-    }
-    });
-
-   if (existingToken) {
-       console.log("Existing refresh token found:", existingToken.token);
-   } else {
-       console.log("No valid refresh token found.");
-   }
-
-   if (existingToken) {
-    // Update the existing token's expiration
-    await prisma.refreshToken.update({
-        where: { id: existingToken.id },
-        data: {
-            issued_at: new Date(),
-            expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-        },
-        
-    });
-    console.log("Refresh token updated successfully!");
-    
-    // Use the existing token
-    //refreshToken = existingToken.token;
-} else {
-    // Create new token only if none exists
-    const newRefreshToken = crypto.randomBytes(64).toString('hex');
-    await prisma.refreshToken.create({
-        data: {
-            user_id: user.id,
-            token: newRefreshToken,
-            issued_at: new Date(),
-            expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-        }
-    });
-    refreshToken = newRefreshToken;
-    console.log("New refresh token created:", refreshToken);
-}
-
-
-   res.send({
-        msg: "Login OK",
-        jwt: accessToken,
-        refreshToken: refreshToken // detta var tidigare utkommenterat
-    });
-
-*/ ///token exists stop
 
 }); 
 
@@ -184,18 +121,11 @@ router.post('/login', async (req, res) => {
         email: user.email,
         user: user.name, 
         role: user.role
-    }, process.env.JWT_SECRET, {expiresIn: '40s'}); //15 minuter Detta var tidigare utkommenterat
+    }, process.env.JWT_SECRET, {expiresIn: '15m'}); //15 minuter Detta var tidigare utkommenterat
     
     
 
-    /*
-    await prisma.refreshToken.update({
-    where: { id: tokenRecord.id }, // Use the refresh token's ID, not user's ID
-    data: {
-        issued_at: new Date(),
-        expires_at: will_expire
-    }
-    });*/
+ 
     try {
     console.log("Attempting to update refresh token with ID:", tokenRecord.id);
     
