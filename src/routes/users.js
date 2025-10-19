@@ -59,7 +59,7 @@ router.post('/login', async (req, res) => {
     email: user.email,
     user: user.name, 
     role: user.role
-    }, process.env.JWT_SECRET, {expiresIn: '15m'})
+    }, process.env.JWT_SECRET, {expiresIn: '40s'})
 
     const refreshToken = crypto.randomBytes(64).toString('hex');
     const expires_at = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
@@ -184,7 +184,7 @@ router.post('/login', async (req, res) => {
         email: user.email,
         user: user.name, 
         role: user.role
-    }, process.env.JWT_SECRET, {expiresIn: '15m'}); //15 minuter Detta var tidigare utkommenterat
+    }, process.env.JWT_SECRET, {expiresIn: '40s'}); //15 minuter Detta var tidigare utkommenterat
     
     
 
